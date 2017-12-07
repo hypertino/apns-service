@@ -1,2 +1,2 @@
-# apns-service
-Sends push notifications via Apple Push Notification Service
+# APNS service
+Gateway service module for sending push notifications via Apple Push Notification Service
