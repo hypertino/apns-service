@@ -7,6 +7,7 @@ import com.turo.pushy.apns.util.{SimpleApnsPushNotification, TokenUtil}
 import com.turo.pushy.apns.{ApnsClientBuilder, ApnsPushNotification, DeliveryPriority, PushNotificationResponse}
 import com.typesafe.scalalogging.StrictLogging
 import io.netty.util
+import io.netty.util.concurrent.GenericFutureListener
 import monix.eval.Task
 import monix.execution.Cancelable
 
@@ -40,17 +41,19 @@ class ApnsClient(configuration: ApnsClientConfiguration) extends StrictLogging {
   protected def sendNotification[T <: ApnsPushNotification](notification: T): Task[PushNotificationResponse[T]] = Task.create { (_, callback) =>
     val request = apnsClient.sendNotification(notification)
 
-    request.addListener((future: util.concurrent.Future[PushNotificationResponse[T]]) => {
-      if (future.isSuccess) {
-        val pushNotificationResponse = future.get()
+    request.addListener(new GenericFutureListener[util.concurrent.Future[PushNotificationResponse[T]]] {
+      override def operationComplete(future: util.concurrent.Future[PushNotificationResponse[T]]): Unit = {
+        if (future.isSuccess){
+          val pushNotificationResponse = future.get()
 
-        if (!pushNotificationResponse.isAccepted) {
-          logger.error("Apns notification rejected: " + pushNotificationResponse)
+          if(!pushNotificationResponse.isAccepted) {
+            logger.error("Apns notification rejected: " + pushNotificationResponse)
+          }
+
+          callback.onSuccess(future.get())
+        }else{
+          callback.onError(future.cause())
         }
-
-        callback.onSuccess(future.get())
-      } else {
-        callback.onError(future.cause())
       }
     })
 
