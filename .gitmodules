@@ -1,0 +1,3 @@
+[submodule "api/apns-service-api"]
+	path = api/apns-service-api
+	url = https://github.com/hypertino/apns-service-api.git
