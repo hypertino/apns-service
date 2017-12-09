@@ -28,4 +28,3 @@ lazy val `apns-service` = project in file(".") enablePlugins Raml2Hyperbus setti
     )
   )
 )
-
