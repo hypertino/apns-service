@@ -2,7 +2,7 @@ scalaVersion := "2.11.12"
 
 lazy val `apns-service` = project in file(".") enablePlugins Raml2Hyperbus settings (
   name := "apns-service",
-  version := "0.1",
+  version := "0.1-SNAPSHOT",
   organization := "com.hypertino",
   resolvers ++= Seq(
     Resolver.sonatypeRepo("public")
