@@ -32,13 +32,15 @@ class ApnsService(implicit val injector: Injector) extends Service with Injectab
     val bundleId = r.body.bundleId
     val payload = r.body.payload
 
+    logger.info(s"Received APNS notification for device token $deviceToken and bundle $bundleId. ${r.body}")
+
     apnsClient.sendNotification(deviceToken, bundleId, payload)
       .flatMap { result =>
         if (result.isAccepted) {
-          logger.info(s"Apns accepted notification for device token $deviceToken and bundle $bundleId. " + result)
+          logger.info(s"APNS accepted notification for device token $deviceToken and bundle $bundleId. $result")
           Task.unit
         } else {
-          logger.warn(s"Apns rejected notification for device token $deviceToken and bundle $bundleId. " + result)
+          logger.warn(s"APNS rejected notification for device token $deviceToken and bundle $bundleId. $result")
 
           if (result.getRejectionReason == ApnsRejectionCause.BadDeviceToken) {
             hyperbus.publish(ApnsBadDeviceTokensFeedPost(BadToken(deviceToken, bundleId))).map { _ => BadRequest(ErrorBody("bad-device-token")) }
@@ -48,7 +50,7 @@ class ApnsService(implicit val injector: Injector) extends Service with Injectab
         }
       }.onErrorRestart(5)
       .onErrorHandleWith { error =>
-        logger.error(s"Apns failed to send notification for device token $deviceToken and bundle $bundleId", error)
+        logger.error(s"APNS failed to send notification for device token $deviceToken and bundle $bundleId", error)
 
         Task.raiseError(error)
       }
