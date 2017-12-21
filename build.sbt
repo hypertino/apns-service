@@ -2,7 +2,7 @@ scalaVersion := "2.11.12"
 
 lazy val `apns-service` = project in file(".") enablePlugins Raml2Hyperbus settings (
   name := "apns-service",
-  version := "0.1-SNAPSHOT",
+  version := "0.2-SNAPSHOT",
   organization := "com.hypertino",
   resolvers ++= Seq(
     Resolver.sonatypeRepo("public")
@@ -10,7 +10,7 @@ lazy val `apns-service` = project in file(".") enablePlugins Raml2Hyperbus setti
   libraryDependencies ++= Seq(
     "com.hypertino" %% "hyperbus" % "0.5-SNAPSHOT",
     "com.hypertino" %% "hyperbus-t-inproc" % "0.5-SNAPSHOT" % "test",
-    "com.hypertino" %% "service-control" % "0.3.1",
+    "com.hypertino" %% "service-control" % "0.4.1",
     "com.hypertino" %% "service-config" % "0.2.3" % "test",
 
     "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
