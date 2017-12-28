@@ -63,6 +63,8 @@ class ApnsServiceTest extends FlatSpec
     hyperbus.ask(ApnsPost(new ApnsNotification("token", "topic", "payload")))
       .runAsync
       .futureValue shouldBe a[Accepted[_]]
+
+    Thread.sleep(1000)
   }
 
   def getModule: Injector = DynamicModule { implicit module =>
