@@ -5,7 +5,7 @@ import com.hypertino.hyperbus.model.{Accepted, BadRequest, EmptyBody, ErrorBody,
 import com.hypertino.hyperbus.serialization.SerializationOptions
 import com.hypertino.hyperbus.subscribe.Subscribable
 import com.hypertino.service.control.api.Service
-import com.hypertino.services.apns.clients.{ApnsClient, ApnsRejectionCause}
+import com.hypertino.services.apns.clients.{ApnsClient, ApnsClientImpl, ApnsRejectionCause}
 import com.hypertino.services.apns.api.{ApnsBadDeviceTokensFeedPost, ApnsPost, BadToken}
 import com.typesafe.scalalogging.StrictLogging
 import monix.eval.Task
@@ -15,11 +15,9 @@ import scaldi.{Injectable, Injector}
 import scala.concurrent.Future
 import scala.concurrent.duration.FiniteDuration
 
-class ApnsService(implicit val injector: Injector) extends Service with Injectable with Subscribable with StrictLogging {
+class ApnsService(private val apnsClient: ApnsClient)(implicit val injector: Injector) extends Service with Injectable with Subscribable with StrictLogging {
   implicit val so = SerializationOptions.default
   import so._
-
-  private val apnsClient = inject[ApnsClient]
 
   private implicit val scheduler: Scheduler = inject[Scheduler]
   private val hyperbus = inject[Hyperbus]
