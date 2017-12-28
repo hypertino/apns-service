@@ -15,16 +15,16 @@ import com.typesafe.config.Config
 import monix.eval.Task
 import monix.execution.Ack.Continue
 import monix.execution.Scheduler
+import org.scalamock.MockHelper
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.easymock.EasyMockSugar.MockObjects
 import org.scalatest.{BeforeAndAfterEach, FlatSpec}
 import scaldi.{DynamicModule, Injectable, Injector}
 
 import scala.concurrent.Future
 
 class ApnsServiceTest extends FlatSpec
-  with BeforeAndAfterEach
   with TestServiceBase
-  with MockFactory
   with Injectable {
 
   "ApnsService" should "send notification" in {
@@ -64,7 +64,9 @@ class ApnsServiceTest extends FlatSpec
       .runAsync
       .futureValue shouldBe a[Accepted[_]]
 
-    Thread.sleep(1000)
+    eventually {
+      verifyExpectations()
+    }
   }
 
   def getModule: Injector = DynamicModule { implicit module =>
